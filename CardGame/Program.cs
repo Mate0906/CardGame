@@ -12,7 +12,7 @@ class Program
             string playerName = GetPlayerName();
             int score = PlayGame();
             Console.WriteLine($"{playerName}, a pontszámod: {score}");
-            keepPlaying = false;
+            keepPlaying = false; // Ideiglenes érték a teszteléshez
         }
 
         Console.WriteLine("Köszönjük a játékot! Viszontlátásra!");
@@ -37,32 +37,43 @@ class Program
         while (playing)
         {
             Console.WriteLine($"Current number: {currentNumber}");
-            string guess = Console.ReadLine().ToLower();
+            string guess;
+
+            do
+            {
+                Console.Write("Your guess: ");
+                guess = Console.ReadLine().ToLower();
+
+                if (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés")
+                {
+                    Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb', vagy 'kilépés'.");
+                }
+
+            } while (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés");
 
             if (guess == "kilépés")
             {
                 playing = false;
+                break;
+            }
+
+            int nextNumber = random.Next(1, 101);
+
+            if ((guess == "nagyobb" && nextNumber > currentNumber) ||
+                (guess == "kisebb" && nextNumber < currentNumber))
+            {
+                Console.WriteLine($"Következő szám: {nextNumber}");
+                Console.WriteLine("Helyes, eltaláltad a számot!");
+                score++;
             }
             else
             {
-                int nextNumber = random.Next(1, 101);
-
-                if ((guess == "nagyobb" && nextNumber > currentNumber) ||
-                    (guess == "kisebb" && nextNumber < currentNumber))
-                {
-                    Console.WriteLine($"Következő szám: {nextNumber}");
-                    Console.WriteLine("Helyes, eltaláltad a számot!");
-                    score++;
-                }
-                else
-                {
-                    Console.WriteLine($"Következő szám: {nextNumber}");
-                    Console.WriteLine("Nem talált! Játék vége.");
-                    playing = false;
-                }
-
-                currentNumber = nextNumber;
+                Console.WriteLine($"Következő szám: {nextNumber}");
+                Console.WriteLine("Nem talált! Játék vége.");
+                playing = false;
             }
+
+            currentNumber = nextNumber;
         }
 
         return score;
