@@ -11,6 +11,7 @@ class Program
         {
             string playerName = GetPlayerName();
             int score = PlayGame();
+            SaveScoreToFile(playerName, score);
             Console.WriteLine($"{playerName}, a pontszámod: {score}");
             keepPlaying = false; // Ideiglenes érték a teszteléshez
         }
@@ -77,5 +78,45 @@ class Program
         }
 
         return score;
+    }
+
+    static void SaveScoreToFile(string playerName, int score)
+    {
+        string filePath = "leaderboard.txt";
+
+        if (!File.Exists(filePath))
+        {
+            File.Create(filePath).Close();
+        }
+
+        string[] lines = File.ReadAllLines(filePath);
+        bool found = false;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string[] parts = lines[i].Split(':');
+            if (parts[0] == playerName)
+            {
+                int existingScore = int.Parse(parts[1]);
+                if (score > existingScore)
+                {
+                    lines[i] = $"{playerName}:{score}";
+                }
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, true))
+            {
+                writer.WriteLine($"{playerName}:{score}");
+            }
+        }
+        else
+        {
+            File.WriteAllLines(filePath, lines);
+        }
     }
 }
