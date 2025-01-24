@@ -1,11 +1,18 @@
-﻿#region Console
+﻿using System;
 
-#endregion
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Üdvözlünk a Higher or Lower Játékban!");
+        bool keepPlaying = true;
 
-#region Records
+        while (keepPlaying)
+        {
+            // A játékmenet és más funkciók később kerülnek ide
+            keepPlaying = false; // Ideiglenes érték a teszteléshez
+        }
 
-#endregion
-
-#region Methods
-
-#endregion
+        Console.WriteLine("Köszönjük a játékot! Viszontlátásra!");
+    }
+}
