@@ -14,5 +14,11 @@ class Program
         }
 
         Console.WriteLine("Köszönjük a játékot! Viszontlátásra!");
+
+        static string GetPlayerName()
+        {
+            Console.Write("Kérem, add meg a neved: ");
+            return Console.ReadLine();
+        }
     }
 }
