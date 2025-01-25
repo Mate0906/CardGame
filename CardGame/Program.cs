@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 class Program
 {
@@ -12,7 +13,7 @@ class Program
             string playerName = GetPlayerName();
             int score = PlayGame();
             SaveScoreToFile(playerName, score);
-            Console.WriteLine($"{playerName}, a pontszámod: {score}");
+            DisplayLeaderboardFromFile();
             keepPlaying = false; // Ideiglenes érték a teszteléshez
         }
 
@@ -47,7 +48,7 @@ class Program
 
                 if (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés")
                 {
-                    Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb', vagy 'kilépés'.");
+                    Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb' vagy 'kilépés'.");
                 }
 
             } while (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés");
@@ -117,6 +118,29 @@ class Program
         else
         {
             File.WriteAllLines(filePath, lines);
+        }
+    }
+
+    static void DisplayLeaderboardFromFile()
+    {
+        string filePath = "leaderboard.txt";
+
+        if (File.Exists(filePath))
+        {
+            Console.WriteLine("\nLeaderboard:");
+
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No leaderboard data found.");
         }
     }
 }
