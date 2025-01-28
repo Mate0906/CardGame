@@ -11,6 +11,21 @@ class Program
         while (keepPlaying)
         {
             string playerName = GetPlayerName();
+
+            if (playerName.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                if (AuthenticateAdmin())
+                {
+                    HandleAdminTasks();
+                    continue;
+                }
+                else
+                {
+                    Console.WriteLine("Helytelen jelszó. Visszatérés a főmenübe.");
+                    continue;
+                }
+            }
+
             int score = PlayGame();
             SaveScoreToFile(playerName, score);
             DisplayLeaderboardFromFile();
@@ -24,6 +39,45 @@ class Program
     {
         Console.Write("Kérem, add meg a neved: ");
         return Console.ReadLine();
+    }
+
+    static bool AuthenticateAdmin()
+    {
+        Console.Write("Admin jelszó: ");
+        string password = Console.ReadLine();
+        return password == "Admin123";
+    }
+
+    static void HandleAdminTasks()
+    {
+        Console.WriteLine("Admin mód aktiválva.");
+        Console.WriteLine("1: Leaderboard törlése\n2: Vissza a főmenübe");
+        Console.Write("Választás: ");
+        string choice = Console.ReadLine();
+
+        if (choice == "1")
+        {
+            ClearLeaderboard();
+        }
+        else
+        {
+            Console.WriteLine("Visszatérés a főmenübe.");
+        }
+    }
+
+    static void ClearLeaderboard()
+    {
+        string filePath = "leaderboard.txt";
+
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+            Console.WriteLine("Leaderboard sikeresen törölve.");
+        }
+        else
+        {
+            Console.WriteLine("A leaderboard fájl nem létezik.");
+        }
     }
 
     static int PlayGame()
