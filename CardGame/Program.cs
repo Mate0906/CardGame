@@ -38,7 +38,7 @@ class Program
 
         while (playing)
         {
-            Console.WriteLine($"Current number: {currentNumber}");
+            Console.WriteLine($"Jelenlegi szám: {currentNumber}");
             string guess;
 
             do
