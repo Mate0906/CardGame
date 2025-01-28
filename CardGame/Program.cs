@@ -17,7 +17,7 @@ class Program
             keepPlaying = AskToPlayAgain();
         }
 
-        Console.WriteLine("Köszönjük a játékot! Viszontlátásra!");
+        Console.WriteLine("Ügyes voltál! Szia!");
     }
 
     static string GetPlayerName()
@@ -43,7 +43,7 @@ class Program
 
             do
             {
-                Console.Write("Your guess: ");
+                Console.Write("Tipp: ");
                 guess = Console.ReadLine().ToLower();
 
                 if (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés")
