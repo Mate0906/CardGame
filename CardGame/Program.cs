@@ -3,13 +3,11 @@ bool keepPlaying = true;
 
 while (keepPlaying)
 {
-    // Játékos neve
     Console.Write("Kérem, add meg a neved: ");
     string playerName = Console.ReadLine();
 
     if (playerName == "Admin")
     {
-        // Admin hitelesítés
         Console.Write("Admin jelszó: ");
         string password = Console.ReadLine();
 
@@ -45,7 +43,6 @@ while (keepPlaying)
         }
     }
 
-    // Játék kezdése
     Random random = new Random();
     int currentNumber = random.Next(1, 101);
     int score = 0;
@@ -132,7 +129,6 @@ while (keepPlaying)
         File.WriteAllLines("leaderboard.txt", lines);
     }
 
-    // Leaderboard kiírása
     if (File.Exists("leaderboard.txt"))
     {
         Console.WriteLine("\nLeaderboard:");
@@ -151,7 +147,6 @@ while (keepPlaying)
         Console.WriteLine("No leaderboard data found.");
     }
 
-    // Új játék kérdése
     Console.Write("Akarsz újra játszani? (igen/nem): ");
     string response = Console.ReadLine().ToLower();
     keepPlaying = response == "igen" || response == "i";
