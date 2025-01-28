@@ -14,7 +14,7 @@ class Program
             int score = PlayGame();
             SaveScoreToFile(playerName, score);
             DisplayLeaderboardFromFile();
-            keepPlaying = false; // Ideiglenes érték a teszteléshez
+            keepPlaying = AskToPlayAgain();
         }
 
         Console.WriteLine("Köszönjük a játékot! Viszontlátásra!");
@@ -142,5 +142,12 @@ class Program
         {
             Console.WriteLine("No leaderboard data found.");
         }
+    }
+
+    static bool AskToPlayAgain()
+    {
+        Console.Write("Akarsz újra játszani? (igen/nem): ");
+        string response = Console.ReadLine().ToLower();
+        return response == "igen" || response == "i";
     }
 }
