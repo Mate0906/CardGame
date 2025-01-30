@@ -16,7 +16,9 @@ class Program
             Console.WriteLine("--------------------------------------------------------------------------------------");
             Console.WriteLine("1 - Játék");
             Console.WriteLine("2 - Információ, készítők");
-            Console.WriteLine("3 - Kilépés");
+            Console.WriteLine("3 - Leaderboard");
+            Console.WriteLine("4 - Admin mód");
+            Console.WriteLine("5 - Kilépés");
             Console.WriteLine("--------------------------------------------------------------------------------------");
             Console.Write("Válassz egy opciót: ");
 
@@ -31,6 +33,12 @@ class Program
                     ShowInfo();
                     break;
                 case "3":
+                    ShowLeaderboard();
+                    break;
+                case "4":
+                    AdminMode();
+                    break;
+                case "5":
                     keepPlaying = false;
                     Console.WriteLine("Viszlát! Köszönjük, hogy játszottál!");
                     break;
@@ -39,6 +47,51 @@ class Program
                     break;
             }
         }
+    }
+
+    static void AdminMode()
+    {
+        Console.Clear();
+        Console.WriteLine("--------------------------------------------------------------------------------------");
+        Console.WriteLine("\t\t\tAdmin Mód - Belépés");
+        Console.WriteLine("--------------------------------------------------------------------------------------");
+        Console.Write("Add meg az admin jelszót: ");
+        string password = Console.ReadLine();
+
+        if (password == "Admin123")
+        {
+            Console.Clear();
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            Console.WriteLine("\t\t\tAdmin Mód - Aktív");
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            Console.WriteLine("1: Leaderboard törlése\n2: Vissza a főmenübe");
+            Console.Write("Választás: ");
+            string adminChoice = Console.ReadLine();
+
+            if (adminChoice == "1")
+            {
+                if (File.Exists("leaderboard.txt"))
+                {
+                    File.Delete("leaderboard.txt");
+                    Console.WriteLine("Leaderboard sikeresen törölve.");
+                }
+                else
+                {
+                    Console.WriteLine("A leaderboard fájl nem létezik.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Visszatérés a főmenübe.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Helytelen jelszó. Visszatérés a főmenübe.");
+        }
+
+        Console.WriteLine("\nNyomj Entert a visszatéréshez...");
+        Console.ReadLine();
     }
 
     static void StartGame()
@@ -50,49 +103,6 @@ class Program
         Console.Write("Név: ");
         string playerName = Console.ReadLine();
         Console.Clear();
-
-        if (playerName == "Admin")
-        {
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("\t\t\tADMIN MÓD - Bejelentkezés");
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.Write("Admin jelszó: ");
-            string password = Console.ReadLine();
-
-            if (password == "Admin123")
-            {
-                Console.Clear();
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("\t\t\tADMIN MÓD - Aktív");
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("1: Leaderboard törlése\n2: Vissza a főmenübe");
-                Console.Write("Választás: ");
-                string choice = Console.ReadLine();
-
-                if (choice == "1")
-                {
-                    if (File.Exists("leaderboard.txt"))
-                    {
-                        File.Delete("leaderboard.txt");
-                        Console.WriteLine("Leaderboard sikeresen törölve.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("A leaderboard fájl nem létezik.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Visszatérés a főmenübe.");
-                }
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Helytelen jelszó. Visszatérés a főmenübe.");
-                return;
-            }
-        }
 
         Random random = new Random();
         int currentNumber = random.Next(1, 101);
@@ -162,16 +172,57 @@ class Program
         Console.WriteLine("Játék vége! Elért pontszám: " + score);
         Console.Write("Nyomj Entert a folytatáshoz...");
         Console.ReadLine();
+
+        string tempFile = "leaderboard_temp.txt";
+        bool found = false;
+
+        if (!File.Exists("leaderboard.txt"))
+        {
+            File.Create("leaderboard.txt").Close();
+        }
+
+        using (StreamReader reader = new StreamReader("leaderboard.txt"))
+        using (StreamWriter writer = new StreamWriter(tempFile))
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] parts = line.Split(':');
+                if (parts.Length == 2 && parts[0] == playerName && int.TryParse(parts[1], out int savedScore))
+                {
+                    if (score > savedScore)
+                    {
+                        writer.WriteLine(playerName + ":" + score);
+                    }
+                    else
+                    {
+                        writer.WriteLine(line);
+                    }
+                    found = true;
+                }
+                else
+                {
+                    writer.WriteLine(line);
+                }
+            }
+
+            if (!found)
+            {
+                writer.WriteLine(playerName + ":" + score);
+            }
+        }
+
+        File.Delete("leaderboard.txt");
+        File.Move(tempFile, "leaderboard.txt");
     }
 
     static void ShowInfo()
     {
         Console.Clear();
-        string fileName = "info.txt";
 
-        if (!File.Exists(fileName))
+        if (!File.Exists("info.txt"))
         {
-            using (StreamWriter writer = new StreamWriter(fileName))
+            using (StreamWriter writer = new StreamWriter("info.txt"))
             {
                 writer.WriteLine("Higher or Lower Játék");
                 writer.WriteLine("---------------------");
@@ -188,7 +239,7 @@ class Program
             }
         }
 
-        Console.WriteLine(File.ReadAllText(fileName));
+        Console.WriteLine(File.ReadAllText("info.txt"));
         Console.WriteLine("\nNyomj Entert a visszatéréshez...");
         Console.ReadLine();
     }
@@ -201,5 +252,32 @@ class Program
         Console.WriteLine($"\t| {numStr} |");
         Console.WriteLine("\t|     |");
         Console.WriteLine("\t└─────┘");
+    }
+
+    static void ShowLeaderboard()
+    {
+        Console.Clear();
+        Console.WriteLine("--------------------------------------------------------------------------------------");
+        Console.WriteLine("\t\t\tLeaderboard");
+        Console.WriteLine("--------------------------------------------------------------------------------------");
+
+        if (!File.Exists("leaderboard.txt"))
+        {
+            Console.WriteLine("Még nincs elérhető toplista.");
+        }
+        else
+        {
+            using (StreamReader reader = new StreamReader("leaderboard.txt"))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+        }
+
+        Console.WriteLine("\nNyomj Entert a visszatéréshez...");
+        Console.ReadLine();
     }
 }
