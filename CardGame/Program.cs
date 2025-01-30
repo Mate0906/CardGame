@@ -1,191 +1,205 @@
 ﻿using System;
 using System.IO;
 
-
-Console.WriteLine("Üdvözlünk a Higher or Lower Játékban!");
-bool keepPlaying = true;
-
-while (keepPlaying)
+class Program
 {
-    Console.Clear();
-    Console.WriteLine("--------------------------------------------------------------------------------------");
-    Console.WriteLine($"Üdvözlünk a Higher or Lower játékban!");
-    Console.WriteLine("Kérlek add meg a neved!");
-    Console.WriteLine("--------------------------------------------------------------------------------------");
-    Console.Write("Név: ");
-    string playerName = Console.ReadLine();
-    Console.Clear();
-
-    if (playerName == "Admin")
+    static void Main()
     {
-        Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.WriteLine("\t\t\tADMIN MÓD - Bejelentkezés");
-        Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.Write("Admin jelszó: ");
-        string password = Console.ReadLine();
+        Console.Title = "Higher or Lower Játék";
+        bool keepPlaying = true;
 
-        if (password == "Admin123")
+        while (keepPlaying)
         {
             Console.Clear();
             Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("\t\t\tADMIN MÓD - Aktív");
+            Console.WriteLine("\t\tÜdvözlünk a Higher or Lower Játékban!");
             Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("1: Leaderboard törlése\n2: Vissza a főmenübe");
-            Console.Write("Választás: ");
-            string choice = Console.ReadLine();
+            Console.WriteLine("1 - Játék");
+            Console.WriteLine("2 - Információ, készítők");
+            Console.WriteLine("3 - Kilépés");
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            Console.Write("Válassz egy opciót: ");
 
-            if (choice == "1")
+            string menuChoice = Console.ReadLine();
+
+            switch (menuChoice)
             {
-                if (File.Exists("leaderboard.txt"))
-                {
-                    File.Delete("leaderboard.txt");
-                    Console.WriteLine("Leaderboard sikeresen törölve.");
-                }
-                else
-                {
-                    Console.WriteLine("A leaderboard fájl nem létezik.");
-                }
+                case "1":
+                    StartGame();
+                    break;
+                case "2":
+                    ShowInfo();
+                    break;
+                case "3":
+                    keepPlaying = false;
+                    Console.WriteLine("Viszlát! Köszönjük, hogy játszottál!");
+                    break;
+                default:
+                    Console.WriteLine("Érvénytelen választás. Próbáld újra!");
+                    break;
             }
-            else
-            {
-                Console.WriteLine("Visszatérés a főmenübe.");
-            }
-            continue;
-        }
-        else
-        {
-            Console.WriteLine("Helytelen jelszó. Visszatérés a főmenübe.");
-            continue;
         }
     }
 
-    Random random = new Random();
-    int currentNumber = random.Next(1, 101);
-    int score = 0;
-    bool playing = true;
-
-    while (playing)
+    static void StartGame()
     {
         Console.Clear();
         Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.WriteLine("Találd ki, hogy a következő szám 'kisebb' vagy 'nagyobb' lesz!");
-        Console.WriteLine("Kilépéshez írd: 'kilépés'");
+        Console.WriteLine("Kérlek add meg a neved!");
         Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.WriteLine("Jelenlegi számkártya:");
-        PrintCard(currentNumber);
-        Console.WriteLine();
+        Console.Write("Név: ");
+        string playerName = Console.ReadLine();
+        Console.Clear();
 
-        string guess;
-        do
+        if (playerName == "Admin")
         {
-            Console.Write("Tipp: ");
-            guess = Console.ReadLine().ToLower();
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            Console.WriteLine("\t\t\tADMIN MÓD - Bejelentkezés");
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            Console.Write("Admin jelszó: ");
+            string password = Console.ReadLine();
 
-            if (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés")
+            if (password == "Admin123")
             {
-                Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb' vagy 'kilépés'.");
+                Console.Clear();
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("\t\t\tADMIN MÓD - Aktív");
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("1: Leaderboard törlése\n2: Vissza a főmenübe");
+                Console.Write("Választás: ");
+                string choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    if (File.Exists("leaderboard.txt"))
+                    {
+                        File.Delete("leaderboard.txt");
+                        Console.WriteLine("Leaderboard sikeresen törölve.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("A leaderboard fájl nem létezik.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Visszatérés a főmenübe.");
+                }
+                return;
             }
-
-        } while (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés");
-
-        if (guess == "kilépés")
-        {
-            playing = false;
-            break;
+            else
+            {
+                Console.WriteLine("Helytelen jelszó. Visszatérés a főmenübe.");
+                return;
+            }
         }
 
-        int nextNumber = random.Next(1, 101);
+        Random random = new Random();
+        int currentNumber = random.Next(1, 101);
+        int score = 0;
+        bool playing = true;
 
-        if ((guess == "nagyobb" && nextNumber > currentNumber) ||
-            (guess == "kisebb" && nextNumber < currentNumber))
+        while (playing)
         {
             Console.Clear();
             Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("TALÁLT!");
+            Console.WriteLine("Találd ki, hogy a következő szám 'kisebb' vagy 'nagyobb' lesz!");
+            Console.WriteLine("Kilépéshez írd: 'kilépés'");
             Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("Következő számkártya:");
-            PrintCard(nextNumber);
-            Console.WriteLine("Helyes, eltaláltad a számot!");
-            score++;
-        }
-        else
-        {
-            Console.Clear();
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("\t\tNEM TALÁLT! JÁTÉK VÉGE!");
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("A következő számkártya:");
-            PrintCard(nextNumber);
+            Console.WriteLine("Jelenlegi számkártya:");
+            PrintCard(currentNumber);
             Console.WriteLine();
-            playing = false;
-        }
 
-        currentNumber = nextNumber;
-    }
-
-    if (!File.Exists("leaderboard.txt"))
-    {
-        File.Create("leaderboard.txt").Close();
-    }
-
-    string[] lines = File.ReadAllLines("leaderboard.txt");
-    bool found = false;
-
-    for (int i = 0; i < lines.Length; i++)
-    {
-        string[] parts = lines[i].Split(':');
-        if (parts[0] == playerName)
-        {
-            int existingScore = int.Parse(parts[1]);
-            if (score > existingScore)
+            string guess;
+            do
             {
-                lines[i] = $"{playerName}:{score}";
+                Console.Write("Tipp: ");
+                guess = Console.ReadLine().ToLower();
+
+                if (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés")
+                {
+                    Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb' vagy 'kilépés'.");
+                }
+
+            } while (guess != "nagyobb" && guess != "kisebb" && guess != "kilépés");
+
+            if (guess == "kilépés")
+            {
+                playing = false;
+                break;
             }
-            found = true;
-            break;
+
+            int nextNumber = random.Next(1, 101);
+
+            if ((guess == "nagyobb" && nextNumber > currentNumber) ||
+                (guess == "kisebb" && nextNumber < currentNumber))
+            {
+                Console.Clear();
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("TALÁLT!");
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("Következő számkártya:");
+                PrintCard(nextNumber);
+                Console.WriteLine("Helyes, eltaláltad a számot!");
+                score++;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("\t\tNEM TALÁLT! JÁTÉK VÉGE!");
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+                Console.WriteLine("A következő számkártya:");
+                PrintCard(nextNumber);
+                Console.WriteLine();
+                playing = false;
+            }
+
+            currentNumber = nextNumber;
         }
+
+        Console.WriteLine("--------------------------------------------------------------------------------------");
+        Console.WriteLine("Játék vége! Elért pontszám: " + score);
+        Console.Write("Nyomj Entert a folytatáshoz...");
+        Console.ReadLine();
     }
 
-    if (!found)
+    static void ShowInfo()
     {
-        using (StreamWriter writer = new StreamWriter("leaderboard.txt", true))
+        Console.Clear();
+        string fileName = "info.txt";
+
+        if (!File.Exists(fileName))
         {
-            writer.WriteLine($"{playerName}:{score}");
+            using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                writer.WriteLine("Higher or Lower Játék");
+                writer.WriteLine("---------------------");
+                writer.WriteLine("A játék lényege: Egy számot kapsz, és ki kell találnod, hogy a következő szám nagyobb vagy kisebb lesz.");
+                writer.WriteLine("Ha helyesen tippelsz, pontot kapsz. Ha tévedsz, a játék véget ér.");
+                writer.WriteLine();
+                writer.WriteLine("Szabályok:");
+                writer.WriteLine("1. A játék mindig egy véletlenszerű számmal kezdődik 1 és 100 között.");
+                writer.WriteLine("2. Minden körben meg kell tippelned, hogy a következő szám nagyobb vagy kisebb lesz.");
+                writer.WriteLine("3. Ha helyesen tippelsz, a játék folytatódik és növeled a pontjaidat.");
+                writer.WriteLine("4. Ha rosszul tippelsz, a játék véget ér.");
+                writer.WriteLine();
+                writer.WriteLine("Készítők: Kovács Lajos, Varga Máté");
+            }
         }
+
+        Console.WriteLine(File.ReadAllText(fileName));
+        Console.WriteLine("\nNyomj Entert a visszatéréshez...");
+        Console.ReadLine();
     }
-    else
+
+    static void PrintCard(int number)
     {
-        File.WriteAllLines("leaderboard.txt", lines);
+        string numStr = number.ToString().PadLeft(3);
+        Console.WriteLine("\t┌─────┐");
+        Console.WriteLine("\t|     |");
+        Console.WriteLine($"\t| {numStr} |");
+        Console.WriteLine("\t|     |");
+        Console.WriteLine("\t└─────┘");
     }
-
-    Console.WriteLine("--------------------------------------------------------------------------------------");
-    Console.WriteLine("Ranglista:");
-    Console.WriteLine();
-
-    using (StreamReader reader = new StreamReader("leaderboard.txt"))
-    {
-        string line;
-        while ((line = reader.ReadLine()) != null)
-        {
-            Console.WriteLine(line);
-        }
-    }
-
-    Console.WriteLine("--------------------------------------------------------------------------------------");
-    Console.WriteLine("");
-    Console.Write("Akarsz újra játszani? (igen/nem): ");
-    string response = Console.ReadLine().ToLower();
-    keepPlaying = response == "igen" || response == "i";
-}
-
-Console.WriteLine("Ügyes voltál! Szia!");
-
-static void PrintCard(int number)
-{
-    string numStr = number.ToString().PadLeft(3);
-    Console.WriteLine("\t┌─────┐");
-    Console.WriteLine("\t|     |");
-    Console.WriteLine($"\t| {numStr} |");
-    Console.WriteLine("\t|     |");
-    Console.WriteLine("\t└─────┘");
 }
