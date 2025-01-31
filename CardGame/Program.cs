@@ -183,9 +183,9 @@ using System.IO;
             while ((sor = olvas.ReadLine()) != null)
             {
                 string[] parts = sor.Split(':');
-                if (parts.Length == 2 && parts[0] == jatekosnev && int.TryParse(parts[1], out int savedScore))
+                if (parts.Length == 2 && parts[0] == jatekosnev && int.TryParse(parts[1], out int mentettPontszam))
                 {
-                    if (pontszam > savedScore)
+                    if (pontszam > mentettPontszam)
                     {
                         w2.WriteLine(jatekosnev + ":" + pontszam);
                     }
