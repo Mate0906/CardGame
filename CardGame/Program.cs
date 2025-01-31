@@ -168,13 +168,8 @@ using System.IO;
         Console.Write("Nyomj Entert a folytatáshoz...");
         Console.ReadLine();
 
-        string fajl = "ranglista.txt";
+        string fajl = "ranglista_temp.txt";
         bool talalt = false;
-
-        if (!File.Exists("ranglista.txt"))
-        {
-            File.Create("ranglista.txt").Close();
-        }
 
         using (StreamReader olvas = new StreamReader("ranglista.txt"))
         using (StreamWriter w2 = new StreamWriter(fajl))
@@ -209,7 +204,7 @@ using System.IO;
 
         File.Delete("ranglista.txt");
         File.Move(fajl, "ranglista.txt");
-    }
+}
 
     void Informaciok()
     {
