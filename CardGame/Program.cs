@@ -89,124 +89,98 @@ using System.IO;
         Console.ReadLine();
     }
 
-    void JatekElkezdese()
+void JatekElkezdese()
+{
+    Console.Clear();
+    Console.WriteLine("Kérlek add meg a neved!");
+    Console.Write("Név: ");
+    string jatekosnev = Console.ReadLine()!;
+    Console.Clear();
+
+    Random random = new Random();
+    int jelenlegiSzam = random.Next(1, 101);
+    int pontszam = 0;
+    bool jatszik = true;
+
+    while (jatszik)
     {
         Console.Clear();
-        Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.WriteLine("Kérlek add meg a neved!");
-        Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.Write("Név: ");
-        string jatekosnev = Console.ReadLine()!;
-        Console.Clear();
+        Console.WriteLine("Találd ki, hogy a következő szám 'kisebb' vagy 'nagyobb' lesz!");
+        Console.WriteLine("Kilépéshez írd: 'kilépés'");
+        Console.WriteLine("Jelenlegi számkártya:");
+        Kartya(jelenlegiSzam);
+        Console.WriteLine();
 
-        Random random = new Random();
-        int jelenlegiSzam = random.Next(1, 101);
-        int pontszam = 0;
-        bool jatszik = true;
+        string tipp;
+        do
+        {
+            Console.Write("Tipp: ");
+            tipp = Console.ReadLine()!.ToLower();
+        } while (tipp != "nagyobb" && tipp != "kisebb" && tipp != "kilépés");
 
-        while (jatszik)
+        if (tipp == "kilépés")
+        {
+            jatszik = false;
+            break;
+        }
+
+        int kovetkezoSzam = random.Next(1, 101);
+
+        if ((tipp == "nagyobb" && kovetkezoSzam > jelenlegiSzam) ||
+            (tipp == "kisebb" && kovetkezoSzam < jelenlegiSzam))
         {
             Console.Clear();
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("Találd ki, hogy a következő szám 'kisebb' vagy 'nagyobb' lesz!");
-            Console.WriteLine("Kilépéshez írd: 'kilépés'");
-            Console.WriteLine("--------------------------------------------------------------------------------------");
-            Console.WriteLine("Jelenlegi számkártya:");
-            Kartya(jelenlegiSzam);
-            Console.WriteLine();
-
-            string tipp;
-            do
-            {
-                Console.Write("Tipp: ");
-                tipp = Console.ReadLine()!.ToLower();
-
-                if (tipp != "nagyobb" && tipp != "kisebb" && tipp != "kilépés")
-                {
-                    Console.WriteLine("Érvénytelen bemenet. Kérlek írd, hogy 'nagyobb', 'kisebb' vagy 'kilépés'.");
-                }
-
-            } while (tipp != "nagyobb" && tipp != "kisebb" && tipp != "kilépés");
-
-            if (tipp == "kilépés")
-            {
-                jatszik = false;
-                break;
-            }
-
-            int kovetkezoSzam = random.Next(1, 101);
-
-            if ((tipp == "nagyobb" && kovetkezoSzam > jelenlegiSzam) ||
-                (tipp == "kisebb" && kovetkezoSzam < jelenlegiSzam))
-            {
-                Console.Clear();
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("TALÁLT!");
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("Következő számkártya:");
-                Kartya(kovetkezoSzam);
-                Console.WriteLine("Helyes, eltaláltad a számot!");
-                pontszam++;
-            }
-            else
-            {
-                Console.Clear();
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("\t\tNEM TALÁLT! JÁTÉK VÉGE!");
-                Console.WriteLine("--------------------------------------------------------------------------------------");
-                Console.WriteLine("A következő számkártya:");
-                Kartya(kovetkezoSzam);
-                Console.WriteLine();
-                jatszik = false;
-            }
-
-            jelenlegiSzam = kovetkezoSzam;
+            Console.WriteLine("TALÁLT!");
+            Kartya(kovetkezoSzam);
+            Console.WriteLine("Helyes, eltaláltad a számot!");
+            pontszam++;
         }
-
-        Console.WriteLine("--------------------------------------------------------------------------------------");
-        Console.WriteLine("Játék vége! Elért pontszám: " + pontszam);
-        Console.Write("Nyomj Entert a folytatáshoz...");
-        Console.ReadLine();
-
-        string fajl = "ranglista_temp.txt";
-        bool talalt = false;
-
-        using (StreamReader olvas = new StreamReader("ranglista.txt"))
-        using (StreamWriter w2 = new StreamWriter(fajl))
+        else
         {
-            string sor;
-            while ((sor = olvas.ReadLine()) != null)
-            {
-                string[] parts = sor.Split(':');
-                if (parts.Length == 2 && parts[0] == jatekosnev && int.TryParse(parts[1], out int mentettPontszam))
-                {
-                    if (pontszam > mentettPontszam)
-                    {
-                        w2.WriteLine(jatekosnev + ":" + pontszam);
-                    }
-                    else
-                    {
-                        w2.WriteLine(sor);
-                    }
-                    talalt = true;
-                }
-                else
-                {
-                    w2.WriteLine(sor);
-                }
-            }
-
-            if (!talalt)
-            {
-                w2.WriteLine(jatekosnev + ":" + pontszam);
-            }
+            Console.Clear();
+            Console.WriteLine("NEM TALÁLT! JÁTÉK VÉGE!");
+            Kartya(kovetkezoSzam);
+            jatszik = false;
         }
 
-        File.Delete("ranglista.txt");
-        File.Move(fajl, "ranglista.txt");
+        jelenlegiSzam = kovetkezoSzam;
+    }
+
+    Console.WriteLine($"Játék vége! Elért pontszám: {pontszam}");
+    Console.Write("Nyomj Entert a folytatáshoz...");
+    Console.ReadLine();
+
+    string fajl = "ranglista.txt";
+    string[] sorok = File.Exists(fajl) ? File.ReadAllLines(fajl) : new string[0];
+    string ujLista = "";
+    bool talalt = false;
+
+    for (int i = 0; i < sorok.Length; i++)
+    {
+        string[] parts = sorok[i].Split(':');
+        if (parts.Length == 2 && parts[0] == jatekosnev && int.TryParse(parts[1], out int mentettPontszam))
+        {
+            if (pontszam > mentettPontszam)
+                ujLista += jatekosnev + ":" + pontszam + "\n";
+            else
+                ujLista += sorok[i] + "\n";
+            talalt = true;
+        }
+        else
+        {
+            ujLista += sorok[i] + "\n";
+        }
+    }
+
+    if (!talalt)
+        ujLista += jatekosnev + ":" + pontszam + "\n";
+
+    File.WriteAllText(fajl, ujLista.TrimEnd());
 }
 
-    void Informaciok()
+
+
+void Informaciok()
     {
         Console.Clear();
 
