@@ -227,7 +227,7 @@ void Informaciok()
 
         if (!File.Exists("ranglista.txt"))
         {
-            Console.WriteLine("Még nincs elérhető toplista.");
+            Console.WriteLine("Még nincs elérhető ranglista.");
         }
         else
         {
